@@ -36,19 +36,22 @@ class Record:
         self.phones.append(Phone(phone))  # Добавление телефона
 
     def remove_phone(self, phone):
-        for p in self.phones:
-            if p.value == phone:
-                self.phones.remove(p)
-                return
-        raise ValueError(f"Телефон {phone} не найден.")
+        phone_to_remove = self.find_phone(phone)
+        if phone_to_remove:
+            self.phones.remove(phone_to_remove)
+        else:
+            raise ValueError(f"Телефон {phone} не найден.")
 
     def edit_phone(self, old_phone, new_phone):
-        for p in self.phones:
-            if p.value == old_phone:
-                self.phones.remove(p)
-                self.add_phone(new_phone)  # Замена телефона
-                return
-        raise ValueError(f"Телефон {old_phone} не найден.")
+        phone_to_edit = self.find_phone(old_phone)
+        if phone_to_edit:
+            try:
+                self.add_phone(new_phone)  # Проверка валидности нового номера
+                self.remove_phone(old_phone)
+            except ValueError as e:
+                raise ValueError(f"Ошибка при замене телефона: {e}")
+        else:
+            raise ValueError(f"Телефон {old_phone} не найден.")
 
     def find_phone(self, phone):
         for p in self.phones:
